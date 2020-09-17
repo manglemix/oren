@@ -1,0 +1,37 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://protagonist.gd" type="Script" id=1]
+[ext_resource path="res://controllable_pivot.gd" type="Script" id=2]
+[ext_resource path="res://controllable_character_movement.gd" type="Script" id=3]
+[ext_resource path="res://motion_blur/motion_blur.tscn" type="PackedScene" id=4]
+
+[sub_resource type="CapsuleShape" id=1]
+radius = 0.4
+
+[node name="Player" type="KinematicBody"]
+collision_layer = 2
+script = ExtResource( 1 )
+movement_node_path = NodePath("../Player/ControllableCharacterMovement")
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.9, 0 )
+shape = SubResource( 1 )
+
+[node name="ControllableCharacterMovement" type="Node" parent="."]
+script = ExtResource( 3 )
+sprint_speed = 5.0
+default_speed = 2.0
+walk_speed = 1.0
+rotation_style = 0
+basis_node_path = NodePath("../ControllablePivot")
+
+[node name="ControllablePivot" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0 )
+script = ExtResource( 2 )
+max_yaw = 70.0
+min_yaw = -70.0
+
+[node name="Camera" type="Camera" parent="ControllablePivot"]
+
+[node name="motion_blur" parent="ControllablePivot/Camera" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.333265 )
