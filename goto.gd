@@ -13,6 +13,7 @@ export var correction_step := 0.1
 var _current_retry_timer: float
 var navigation: Navigation
 var path: PoolVector3Array setget set_path
+var direct_space_state: PhysicsDirectSpaceState
 
 onready var character: Character = get_parent()
 
@@ -38,6 +39,10 @@ func end_pathfinding() -> void:
 	clear_path()
 	set_physics_process(false)
 	character.movement_vector = Vector3.ZERO
+
+
+func _enter_tree():
+	direct_space_state = get_world().direct_space_state
 
 
 func _ready():
@@ -81,16 +86,18 @@ func _physics_process(delta):
 	if _current_retry_timer <= 0:
 		goto(path[-1])
 	
-	var travel := path[0] + character.global_transform.basis.xform(transform.origin) - global_transform.origin
-	var result := move_and_collide(travel, true, true, true)
+	var result := _test_move_to_point(path[0])
 	
 	if result:
 		if path.size() > 1:
-			var from_vector := character.global_transform.origin - path[0]
-			var out_vector := path[1] - path[0]
-			var normal_vector := (from_vector.normalized() + out_vector.normalized()) / 2
+			var from_vector := (character.global_transform.origin - path[0]).normalized()
+			var out_vector := (path[1] - path[0]).normalized()
+			var normal_vector := from_vector.linear_interpolate(out_vector, 0.5)
 			
-			if sign(character.to_local(result.position).x) == sign(character.global_transform.basis.xform_inv(normal_vector).x):
+			if normal_vector.angle_to(from_vector) <= PI / 4:
+				normal_vector = from_vector
+				
+			elif sign(character.global_transform.basis.xform_inv(result.normal).x) != sign(character.global_transform.basis.xform_inv(normal_vector).x):
 				normal_vector *= -1
 			
 			path[0] = navigation.to_global(
@@ -120,3 +127,7 @@ func _physics_process(delta):
 func _look_at_point(point: Vector3) -> void:
 	point.y = character.global_transform.origin.y
 	character.look_at(point, Vector3.UP)
+
+
+func _test_move_to_point(point: Vector3) -> KinematicCollision:
+	return move_and_collide(point + character.global_transform.basis.xform(transform.origin) - global_transform.origin, true, true, true)
