@@ -74,6 +74,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://pivot_point.gd"
 }, {
+"base": "Label",
+"class": "Speedometer",
+"language": "GDScript",
+"path": "res://speedometer.gd"
+}, {
 "base": "Node",
 "class": "State",
 "language": "GDScript",
@@ -103,6 +108,7 @@ _global_script_class_icons={
 "Goto": "",
 "InterpolatedNode": "",
 "PivotPoint": "",
+"Speedometer": "",
 "State": "",
 "StateMachine": "",
 "VelocityMeter": ""

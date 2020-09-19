@@ -9,11 +9,14 @@ export var max_distance := 1.0
 export var speed := 1.0
 export var retry_time := 2.0
 export var correction_step := 0.1
+export var face_path := true
 
 var _current_retry_timer: float
 var navigation: Navigation
 var path: PoolVector3Array setget set_path
 var direct_space_state: PhysicsDirectSpaceState
+
+var _sliding := false
 
 onready var character: Character = get_parent()
 
@@ -77,17 +80,29 @@ func path_length(arr: PoolVector3Array) -> float:
 
 func goto(position: Vector3) -> void:
 	path = solve_path(position)
-	
 	path.remove(0)
+	var tmp_array: PoolVector3Array
+	var last_point := navigation.to_global(path[0])
+	tmp_array.append(last_point)
 	
-	for i in range(path.size()):
-		path[i] = navigation.to_global(path[i])
+	for i in range(1, path.size()):
+		var tmp_point := navigation.to_global(path[i])
+		
+		if not last_point.is_equal_approx(tmp_point):
+			tmp_array.append(tmp_point)
+		
+		last_point = tmp_point
 	
+	path = tmp_array
 	_current_retry_timer = retry_time
 	set_physics_process(true)
 
 
 func _physics_process(delta):
+	_current_retry_timer -= delta
+	if _current_retry_timer <= 0:
+		goto(path[-1])
+	
 	if path[0].distance_to(character.global_transform.origin) <= max_distance:
 		path.remove(0)
 		
@@ -97,46 +112,30 @@ func _physics_process(delta):
 			emit_signal("finished")
 			return
 	
-	_current_retry_timer -= delta
-	if _current_retry_timer <= 0:
-		goto(path[-1])
-	
-	var result := _test_move_to_point(path[0])
-	
-	if result:
-		if path.size() > 1:
-			var from_vector := (character.global_transform.origin - path[0]).normalized()
-			var out_vector := (path[1] - path[0]).normalized()
-			var normal_vector := from_vector.linear_interpolate(out_vector, 0.5)
+	if path.size() > 1:
+		var in_vector := (path[0] - character.global_transform.origin).normalized()
+		var out_vector := (path[1] - path[0]).normalized()
 			
-			if normal_vector.angle_to(from_vector) <= PI / 4:
-				normal_vector = from_vector
-				
-			elif sign(character.global_transform.basis.xform_inv(result.normal).x) != sign(character.global_transform.basis.xform_inv(normal_vector).x):
-				normal_vector *= -1
-			
-			path[0] = navigation.to_global(
-				navigation.get_closest_point(
-					navigation.to_local(
-						path[0] + normal_vector.normalized() * correction_step
-					)
-				)
-			)
-		
-		else:
-			path[0] = navigation.to_global(
-				navigation.get_closest_point(
-					navigation.to_local(
-						path[0] + result.normal * correction_step
-					)
-				)
-			)
+		if in_vector.dot(out_vector) >= 0.95:
+			path.remove(0)
+	
+	var relative_path := path[0] - character.global_transform.origin
+	var result := _test_move_to_point(path[0] + character.global_transform.basis.xform(transform.origin) - global_transform.origin)
+	
+	if result and result.travel.length() <= 0.1:
+		if not _sliding:
+			character.movement_vector = relative_path.slide(result.normal).normalized() * speed
+			_sliding = true
+	
+	else:
+		character.movement_vector = relative_path.normalized() * speed
+		_sliding = false
+	
+	if face_path and not is_zero_approx(character.movement_vector.length_squared()):
+		_look_at_point(character.global_transform.origin + character.movement_vector)
 	
 	var debug := [character.global_transform.origin] + Array(path)
 	$DrawPath.draw_global_path(debug)
-	
-	_look_at_point(path[0])
-	character.movement_vector = character.global_transform.basis.z * - speed
 
 
 func _look_at_point(point: Vector3) -> void:
@@ -145,4 +144,4 @@ func _look_at_point(point: Vector3) -> void:
 
 
 func _test_move_to_point(point: Vector3) -> KinematicCollision:
-	return move_and_collide(point + character.global_transform.basis.xform(transform.origin) - global_transform.origin, true, true, true)
+	return move_and_collide(point, true, true, true)
