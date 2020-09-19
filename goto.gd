@@ -8,13 +8,11 @@ signal navigation_ready
 export var max_distance := 1.0
 export var speed := 1.0
 export var retry_time := 2.0
-export var correction_step := 0.1
 export var face_path := true
 
 var _current_retry_timer: float
 var navigation: Navigation
 var path: PoolVector3Array setget set_path
-var direct_space_state: PhysicsDirectSpaceState
 
 var _sliding := false
 
@@ -42,10 +40,6 @@ func end_pathfinding() -> void:
 	clear_path()
 	set_physics_process(false)
 	character.movement_vector = Vector3.ZERO
-
-
-func _enter_tree():
-	direct_space_state = get_world().direct_space_state
 
 
 func _ready():
@@ -115,7 +109,7 @@ func _physics_process(delta):
 	if path.size() > 1:
 		var in_vector := (path[0] - character.global_transform.origin).normalized()
 		var out_vector := (path[1] - path[0]).normalized()
-			
+		
 		if in_vector.dot(out_vector) >= 0.95:
 			path.remove(0)
 	

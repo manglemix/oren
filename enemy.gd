@@ -8,7 +8,8 @@ signal agitated(strength, type)
 
 export var audio_sensitivity := 10.0
 export var visual_sensitivity := 10.0
-export var minimum_player_visibility := 0.3
+export var player_speed_factor := 0.1
+export var minimum_player_visibility := 0.1
 export var player_cast_target_path := "CollisionShape"
 export var cast_origin_path: NodePath = "../CollisionShape"
 
@@ -56,4 +57,4 @@ func _handle_visual_event(collider: CollisionObject, intensity := 1.0) -> void:
 
 
 func _physics_process(_delta):
-	_handle_visual_event(player, flashlight.light_energy * float(flashlight.visible) + minimum_player_visibility)
+	_handle_visual_event(player, flashlight.light_energy * float(flashlight.visible) + player.linear_velocity.length() * player_speed_factor + minimum_player_visibility)
