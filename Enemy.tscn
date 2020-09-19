@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://character.gd" type="Script" id=1]
 [ext_resource path="res://enemy.gd" type="Script" id=2]
 [ext_resource path="res://wander.gd" type="Script" id=3]
 [ext_resource path="res://goto.gd" type="Script" id=4]
+[ext_resource path="res://chase.gd" type="Script" id=5]
 
 [sub_resource type="SphereShape" id=1]
 radius = 0.5
@@ -26,6 +27,9 @@ script = ExtResource( 2 )
 script = ExtResource( 3 )
 active = true
 default = true
+
+[node name="Chase" type="Node" parent="Enemy"]
+script = ExtResource( 5 )
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0 )

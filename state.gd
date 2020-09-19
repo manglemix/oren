@@ -47,8 +47,7 @@ func _ready():
 
 
 func handle_default(emitter: Node) -> void:
-	if default and not active:
-		set_active(true)
+	set_active(default)
 
 
 func handle_activation(emitter: Node, states) -> void:

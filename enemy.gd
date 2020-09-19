@@ -8,16 +8,18 @@ signal agitated(strength, type)
 
 export var audio_sensitivity := 10.0
 export var visual_sensitivity := 10.0
-export var minimum_player_intensity := 1.0
+export var minimum_player_visibility := 0.3
 export var player_cast_target_path := "CollisionShape"
 export var cast_origin_path: NodePath = "../CollisionShape"
 
+var navigation: Navigation
 var player: Character
 var player_cast_target: Spatial
 var flashlight: SpotLight
 var direct_space_state: PhysicsDirectSpaceState
 
 onready var parent: Character = get_parent()
+onready var goto: Goto = parent.get_node("Goto")
 onready var current_scene: BaseScene = get_tree().current_scene
 onready var cast_origin: Spatial = get_node(cast_origin_path)
 
@@ -39,7 +41,10 @@ func _ready():
 
 
 func _handle_audio_event(position: Vector3, volume := 1.0) -> void:
-	emit_signal("agitated", volume / (position - parent.global_transform.origin).length_squared() * audio_sensitivity, AUDIO)
+	if goto == null:
+		yield(self, "ready")
+	
+	emit_signal("agitated", volume / pow(goto.path_length(goto.solve_path(position)), 2) * audio_sensitivity, AUDIO)
 
 
 func _handle_visual_event(collider: CollisionObject, intensity := 1.0) -> void:
@@ -51,4 +56,4 @@ func _handle_visual_event(collider: CollisionObject, intensity := 1.0) -> void:
 
 
 func _physics_process(_delta):
-	_handle_visual_event(player, flashlight.light_energy * float(flashlight.visible) + minimum_player_intensity)
+	_handle_visual_event(player, flashlight.light_energy * float(flashlight.visible) + minimum_player_visibility)

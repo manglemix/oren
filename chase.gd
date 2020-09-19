@@ -27,10 +27,10 @@ func _handle_agitation(strength: float, type: int) -> void:
 				enemy_ai.activate_states(self, self)
 				target = enemy_ai.player.get_node("CollisionShape").global_transform.origin
 		
-#		enemy_ai.VISUAL:
-#			if strength >= 0.1:
-#				enemy_ai.activate_states(self, self)
-#				target = enemy_ai.player.get_node("CollisionShape").global_transform.origin
+		enemy_ai.VISUAL:
+			if strength >= 0.1:
+				enemy_ai.activate_states(self, self)
+				target = enemy_ai.player.get_node("CollisionShape").global_transform.origin
 
 
 func _target_reached() -> void:

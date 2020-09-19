@@ -57,11 +57,26 @@ func _ready():
 	emit_signal("navigation_ready")
 
 
-func goto(position: Vector3) -> void:
-	path = navigation.get_simple_path(
-		navigation.get_closest_point(navigation.to_local(character.global_transform.origin)),
-		navigation.get_closest_point(navigation.to_local(position))
+func solve_path(destination: Vector3, origin:=global_transform.origin) -> PoolVector3Array:
+	return navigation.get_simple_path(
+		navigation.get_closest_point(navigation.to_local(origin)),
+		navigation.get_closest_point(navigation.to_local(destination))
 	)
+
+
+func path_length(arr: PoolVector3Array) -> float:
+	var last := arr[0]
+	var length: float
+	
+	for i in range(1, arr.size()):
+		length += last.distance_to(arr[i])
+		last = arr[i]
+	
+	return length
+
+
+func goto(position: Vector3) -> void:
+	path = solve_path(position)
 	
 	path.remove(0)
 	
