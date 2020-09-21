@@ -5,10 +5,10 @@ extends Node
 signal activated
 signal deactivated
 
-var state_machine: StateMachine
-
 export var active := false setget set_active
 export var default := false
+
+var state_machine: StateMachine
 
 
 func set_active(value: bool) -> void:
@@ -33,13 +33,13 @@ func _enter_tree():
 	
 	if state_machine != null:
 		state_machine.connect("default_activated", self, "handle_default")
-		state_machine.connect("states_activated", self, "handle_activation")
+		state_machine.connect("state_activated", self, "handle_activation")
 
 
 func _exit_tree():
 	if state_machine != null:
 		state_machine.disconnect("default_activated", self, "handle_default")
-		state_machine.disconnect("states_activated", self, "handle_activation")
+		state_machine.disconnect("state_activated", self, "handle_activation")
 
 
 func _ready():
@@ -50,8 +50,6 @@ func handle_default(emitter: Node) -> void:
 	set_active(default)
 
 
-func handle_activation(emitter: Node, states) -> void:
-	var is_in: bool = self in states
-	
-	if is_in != active:
-		set_active(is_in)
+func handle_activation(emitter: Node, state) -> void:
+	if (self == state) != active:
+		set_active(not active)

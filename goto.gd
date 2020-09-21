@@ -6,6 +6,7 @@ signal finished
 signal navigation_ready
 
 export var max_distance := 1.0
+export var minor_distance := 0.1
 export var speed := 1.0
 export var retry_time := 2.0
 export var face_path := true
@@ -75,6 +76,7 @@ func path_length(arr: PoolVector3Array) -> float:
 func goto(position: Vector3) -> void:
 	path = solve_path(position)
 	path.remove(0)
+	
 	var tmp_array: PoolVector3Array
 	var last_point := navigation.to_global(path[0])
 	tmp_array.append(last_point)
@@ -93,31 +95,38 @@ func goto(position: Vector3) -> void:
 
 
 func _physics_process(delta):
+	if path.size() == 0:
+		set_physics_process(false)
+		character.movement_vector = Vector3.ZERO
+		emit_signal("finished")
+		return
+	
 	_current_retry_timer -= delta
 	if _current_retry_timer <= 0:
 		goto(path[-1])
 	
-	if path[0].distance_to(character.global_transform.origin) <= max_distance:
-		path.remove(0)
-		
-		if path.size() == 0:
-			set_physics_process(false)
-			character.movement_vector = Vector3.ZERO
-			emit_signal("finished")
-			return
-	
 	if path.size() > 1:
+		if path[0].distance_to(character.global_transform.origin) <= minor_distance:
+			path.remove(0)
+			
+			if path.size() == 1:
+				return
+		
 		var in_vector := (path[0] - character.global_transform.origin).normalized()
 		var out_vector := (path[1] - path[0]).normalized()
 		
 		if in_vector.dot(out_vector) >= 0.95:
 			path.remove(0)
 	
+	elif path[0].distance_to(character.global_transform.origin) <= max_distance:
+		path.remove(0)
+		return
+	
 	var relative_path := path[0] - character.global_transform.origin
 	var result := _test_move_to_point(path[0] + character.global_transform.basis.xform(transform.origin) - global_transform.origin)
 	
-	if result and result.travel.length() <= 0.1:
-		if not _sliding:
+	if result and result.travel.length() <= minor_distance:
+		if path.size() == 1 or not _sliding:
 			character.movement_vector = relative_path.slide(result.normal).normalized() * speed
 			_sliding = true
 	

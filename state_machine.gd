@@ -3,19 +3,19 @@ extends Node
 
 
 signal default_activated(emitter)
-signal states_activated(emitter, states)
+signal state_activated(emitter, states)
 
 
 func activate_default(emitter: Node) -> void:
 	emit_signal("default_activated", emitter)
 
 
-func activate_states(emitter: Node, states) -> void:
-	if states is Array:
-		emit_signal("states_activated", emitter, states)
+func activate_state(emitter: Node, state) -> void:
+	if state is Node:
+		emit_signal("state_activated", emitter, state)
 	
-	elif states is Node:
-		emit_signal("states_activated", emitter, [states])
+	elif state is String or state is NodePath:
+		emit_signal("state_activated", emitter, get_node(state))
 	
 	else:
-		push_error("states is not an Array of Nodes, or a Node")
+		push_error("states is not a Node, NodePath, or String")
