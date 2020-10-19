@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/459964__florianreichelt__footsteps-on-concrete.wav-b0087b78c02936186b2611ccdcf69266.sample"
+
+[deps]
+
+source_file="res://sounds/459964__florianreichelt__footsteps-on-concrete.wav"
+dest_files=[ "res://.import/459964__florianreichelt__footsteps-on-concrete.wav-b0087b78c02936186b2611ccdcf69266.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

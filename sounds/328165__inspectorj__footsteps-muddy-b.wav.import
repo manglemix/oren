@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/328165__inspectorj__footsteps-muddy-b.wav-ea5e4c4ac8004f4b9dea492855195c4d.sample"
+
+[deps]
+
+source_file="res://sounds/328165__inspectorj__footsteps-muddy-b.wav"
+dest_files=[ "res://.import/328165__inspectorj__footsteps-muddy-b.wav-ea5e4c4ac8004f4b9dea492855195c4d.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://character.gd" type="Script" id=1]
 [ext_resource path="res://enemy.gd" type="Script" id=2]
@@ -6,6 +6,9 @@
 [ext_resource path="res://goto.gd" type="Script" id=4]
 [ext_resource path="res://chase.gd" type="Script" id=5]
 [ext_resource path="res://run.gd" type="Script" id=6]
+[ext_resource path="res://movement_noise.gd" type="Script" id=7]
+[ext_resource path="res://sounds/329607__inspectorj__footsteps-puddles-c.wav" type="AudioStream" id=8]
+[ext_resource path="res://sounds/328165__inspectorj__footsteps-muddy-b.wav" type="AudioStream" id=9]
 
 [sub_resource type="SphereShape" id=1]
 radius = 0.5
@@ -62,3 +65,9 @@ max_distance = 0.72
 
 [node name="CollisionShape" type="CollisionShape" parent="Goto"]
 shape = SubResource( 4 )
+
+[node name="MovementNoise" type="Node" parent="."]
+script = ExtResource( 7 )
+max_speed = 10.0
+volume = 15.0
+sounds = [ ExtResource( 8 ), ExtResource( 9 ) ]

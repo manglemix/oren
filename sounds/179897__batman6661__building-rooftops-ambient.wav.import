@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/179897__batman6661__building-rooftops-ambient.wav-70abd896ab38e68219ee8ec97e8b21ff.sample"
+
+[deps]
+
+source_file="res://sounds/179897__batman6661__building-rooftops-ambient.wav"
+dest_files=[ "res://.import/179897__batman6661__building-rooftops-ambient.wav-70abd896ab38e68219ee8ec97e8b21ff.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

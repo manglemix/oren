@@ -7,7 +7,11 @@ export var player_path: NodePath = "Player"
 export var flashlight_path: NodePath = "Hand/Flashlight"
 export var flash_path: NodePath = "Hand/Flash"
 export var navigation_path: NodePath = "Navigation"
+export var bg_music_stream: AudioStream setget set_bg_music_stream
+export var bg_volume := 0.0 setget set_bg_volume
 export(Array, NodePath) var debug_nodes: Array
+
+var bg_music := AudioStreamPlayer.new()
 
 onready var navigation: Navigation = get_node(navigation_path)
 onready var enemy_body: Character = get_node(enemy_path)
@@ -15,6 +19,16 @@ onready var enemy_ai: Node = enemy_body.get_node("Enemy")
 onready var player: Character = get_node(player_path)
 onready var flashlight: SpotLight = get_node(flashlight_path)
 onready var flash: SpotLight = get_node(flash_path)
+
+
+func set_bg_music_stream(stream: AudioStream) -> void:
+	bg_music_stream = stream
+	bg_music.stream = stream
+
+
+func set_bg_volume(db: float) -> void:
+	bg_volume = db
+	bg_music.volume_db = db
 
 
 func play_audio_event(position: Vector3, volume := 1.0) -> void:
@@ -30,6 +44,8 @@ func flash_effect(linger:=0.8, fade:=2.0) -> void:
 	texture_rect.texture = ImageTexture.new()
 	texture_rect.texture.create_from_image(get_viewport().get_texture().get_data())
 	texture_rect.flip_v = true
+	texture_rect.material = CanvasItemMaterial.new()
+	texture_rect.material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
 	add_child(texture_rect)
 	
 	yield(get_tree().create_timer(linger), "timeout")
@@ -47,3 +63,9 @@ func _input(event):
 		for path in debug_nodes:
 			var node := get_node(path)
 			node.visible = not node.visible
+
+
+func _ready():
+	bg_music.connect("finished", bg_music, "play")
+	bg_music.autoplay = true
+	add_child(bg_music)

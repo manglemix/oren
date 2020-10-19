@@ -82,7 +82,7 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "MovementNoise",
 "language": "GDScript",
-"path": "res://noise_generator.gd"
+"path": "res://movement_noise.gd"
 }, {
 "base": "Spatial",
 "class": "PivotPoint",
@@ -138,9 +138,17 @@ config/name="oren"
 run/main_scene="res://factory.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+AudioQueue="*res://audio_queue.gd"
+
 [debug]
 
 settings/stdout/print_fps=true
+
+[display]
+
+window/size/fullscreen=true
 
 [input]
 

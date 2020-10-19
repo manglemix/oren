@@ -28,9 +28,9 @@ func _input(event):
 		if current_scene.enemy_ai.player_visible and current_scene.player.global_transform.origin.distance_to(current_scene.enemy_body.global_transform.origin) <= flash_distance:
 			current_scene.enemy_ai.activate_state(self, "Run")
 		
-#		yield(get_tree(), "idle_frame")
-#		yield(get_tree(), "idle_frame")
-#		current_scene.flash_effect()
+		yield(get_tree(), "idle_frame")
+		yield(get_tree(), "idle_frame")
+		current_scene.flash_effect()
 
 
 func _process(delta):
